@@ -2,33 +2,76 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class PlayerBasicMovement : MonoBehaviour
 {
-    private Rigidbody rb;
-    public int lifeCount = 3;
+    
+    public int scoreCount = 0;
     public float friction;
     public float vertical;
     public float horizontal;
-    public bool isGrounded;
-    public Vector3 spawnPos;
-    public GameObject otherObj;
 
-    [SerializeField] TextMeshProUGUI LifeUI;
+    private Rigidbody rb;
+    private int lifeMax = 3;
+    private int lifeCount = 3;
+    private bool isGrounded;
+    private Vector3 spawnPos;
+    private GameObject otherObj;
+    public bool gameStop;
+
+    [SerializeField] GameObject LifeUI;
+    [SerializeField] GameObject FinishedScreen;
+    [SerializeField] GameObject FadeScreen;
+    private CanvasGroup FinishedScreenCG;
+    private TextMeshProUGUI ScoreNum;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         spawnPos = new Vector3(0, 3, 0);
+
+        FinishedScreenCG = FinishedScreen.GetComponent<CanvasGroup>();
+        ScoreNum = FinishedScreen.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+
+        FinishedScreenCG.alpha = 0;
     }
 
     void Update()
     {
+        if (gameStop)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                FinishedScreenCG.alpha = 0;
+                gameStop = false;
+                Time.timeScale = 1;
+            }
+
+        }
+
         if (transform.position.y < -10)
         {
+            Fader(); //hit screen effect
             transform.position = spawnPos;
-            lifeCount--;
-            LifeUI.text = lifeCount.ToString();
+
+            if (lifeCount < 1)
+            {
+                lifeCount = 3;
+                ScoreNum.text = scoreCount.ToString();
+                FinishedScreenCG.alpha = 1;
+                gameStop = true;
+                Time.timeScale = 0;
+                scoreCount = 0;
+            }
+
+            else
+            {
+                lifeCount--;
+                //LifeUI.GetComponentInChildren<TextMeshProUGUI>().text = lifeCount.ToString();
+                LifeUI.GetComponentInChildren<Image>().fillAmount = (float) lifeCount / lifeMax;
+            }
         }
     }
 
@@ -55,4 +98,12 @@ public class PlayerBasicMovement : MonoBehaviour
             isGrounded = false;
         }
     }
+
+   
+    public void Fader()
+    {
+        FadeScreen.GetComponent<CanvasGroup>().alpha = 1;
+        FadeScreen.GetComponent<CanvasGroup>().DOFade(0, 1).SetUpdate(true);
+    }
+
 }
