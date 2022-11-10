@@ -25,7 +25,7 @@ public class GenerateCollectible : MonoBehaviour
         {
             if (currentNum < maxNum)
             {
-                Vector3 newSpawnPos = new Vector3(Random.Range(-4f, 4f) + collectibleT.position.x, -3.5f, Random.Range(-4f, 4f) + collectibleT.position.z);
+                Vector3 newSpawnPos = new Vector3(Random.Range(-5.5f, 8f) + collectibleT.position.x, -3.5f, collectibleT.position.z);
                 GameObject newCollectible = Instantiate(CollectiblePrefab, newSpawnPos, Quaternion.identity);
                 currentNum++;
             }
