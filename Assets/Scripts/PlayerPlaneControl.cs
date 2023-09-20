@@ -7,54 +7,63 @@ public class PlayerPlaneControl : MonoBehaviour
 {
     public float turnAmount = 10;
     public float turnSpeed = 0.4f;
-    private float timeCount = 0.0f;
-    [SerializeField] Sprite PurpleSelected;
-    [SerializeField] Sprite YellowSelected;
-    [SerializeField] Sprite PurpleIdle;
-    [SerializeField] Sprite YellowIdle;
-    private Image PurpleUI;
-    private Image YellowUI;
-    [SerializeField] float vertical = 0;
-    [SerializeField] float horizontal = 0;
+    public float timeCount = 0.0f;
+
+    public GameObject playerBall;
+    
+    // Set the icon for the UI
+    private Sprite Icon_LeftSelected;
+    private Sprite Icon_RightSelected;
+    private Sprite Icon_LeftIdle;
+    private Sprite Icon_RightIdle;
+    private Image LeftUI;
+    private Image RightUI;
+    public float vertical = 0;
+    public float horizontal = 0;
 
     void Start()
     {
-        PurpleUI = GameObject.Find("PurpleSide").GetComponent<Image>();
-        YellowUI = GameObject.Find("YellowSide").GetComponent<Image>();
+        LeftUI = GameObject.Find("LeftSide").GetComponent<Image>();
+        RightUI = GameObject.Find("RightSide").GetComponent<Image>();
+        playerBall = GameObject.FindGameObjectWithTag("Player");
+
+        Icon_LeftIdle = Resources.Load<Sprite>("Sprites/Left_Idle");
+        Icon_LeftSelected = Resources.Load<Sprite>("Sprites/Left_Selected");
+        Icon_RightIdle = Resources.Load<Sprite>("Sprites/Right_Idle");
+        Icon_RightSelected = Resources.Load<Sprite>("Sprites/Right_Selected");
     }
 
     // Update is called once per frame
-    void Update()
+    public virtual void Update()
     {
-        
-        //vertical = Input.GetAxis("Vertical");
-        horizontal = Input.GetAxis("Horizontal");
+        rotatePlane();
 
+        changeHandUI();
+    }
+
+    public virtual void rotatePlane(){
+        horizontal = Input.GetAxis("Horizontal");
 
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, horizontal * turnAmount * -1), timeCount * turnSpeed);
 
         timeCount = timeCount + Time.deltaTime;
+    }
 
-        //change UI image based on inputs
-        //if (vertical != 0)
-        //    PurpleUI.sprite = PurpleSelected;
-        //else
-        //    PurpleUI.sprite = PurpleIdle;
-
+    void changeHandUI(){
         if (horizontal > 0)
         {
-            YellowUI.sprite = YellowSelected;
-            PurpleUI.sprite = PurpleIdle;
+            RightUI.sprite = Icon_RightSelected;
+            LeftUI.sprite = Icon_LeftIdle;
         }
         else if (horizontal < 0)
         {
-            YellowUI.sprite = YellowIdle;
-            PurpleUI.sprite = PurpleSelected;
+            RightUI.sprite = Icon_RightIdle;
+            LeftUI.sprite = Icon_LeftSelected;
         }
         else
         {
-            YellowUI.sprite = YellowIdle;
-            PurpleUI.sprite = PurpleIdle;
+            RightUI.sprite = Icon_RightIdle;
+            LeftUI.sprite = Icon_LeftIdle;
         }
     }
 }

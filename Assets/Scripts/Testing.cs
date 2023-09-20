@@ -4,23 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class Testing : MonoBehaviour
+public class Testing : PlayerPlaneControl
 {
-    public float turnAmount = 10;
-    public float turnSpeed = 0.4f;
-    private float timeCount = 0.0f;
-    [SerializeField] Sprite PurpleSelected;
-    [SerializeField] Sprite YellowSelected;
-    [SerializeField] Sprite PurpleIdle;
-    [SerializeField] Sprite YellowIdle;
+
+    [Header("Training secssion UI")]
     [SerializeField] TextMeshProUGUI instruction;
-    private Image PurpleUI;
-    private Image YellowUI;
-    [SerializeField] float vertical = 0;
-    [SerializeField] float horizontal = 0;
-
-    private GameObject playerBall;
-
+    
     [Header("Testing Session")]
     public bool finishTestingLeft = false;
     public bool finishTestingRight = false;
@@ -36,16 +25,19 @@ public class Testing : MonoBehaviour
     [SerializeField] string instructionLeft = "Imagine pressing the LEFT side of the plane using your LEFT hand.";
     [SerializeField] string instructionRight = "Imagine pressing the RIGHT side of the plane using your RIGHT hand.";
 
-    void Start()
-    {
-        PurpleUI = GameObject.Find("PurpleSide").GetComponent<Image>();
-        YellowUI = GameObject.Find("YellowSide").GetComponent<Image>();
-        playerBall = GameObject.FindGameObjectWithTag("Player");
-    }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
+        base.Update();
+        runTraining();
+    }
+
+    public override void rotatePlane(){
+        //override the rotatePlane() in PlayerPlaneControl.cs
+    }
+    void runTraining(){
+        // training session
         if (!finishTestingRight)
         {
             if (!finishTestingLeft)
@@ -76,7 +68,6 @@ public class Testing : MonoBehaviour
             instruction.text = "Testing is done. Your are good to go.";
         }
 
-
         if (isLeft)
         {
             horizontal = -0.4f;
@@ -92,23 +83,6 @@ public class Testing : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, horizontal * turnAmount * -1), timeCount * turnSpeed);
 
         timeCount = timeCount + Time.deltaTime;
-
-
-        if (horizontal > 0)
-        {
-            YellowUI.sprite = YellowSelected;
-            PurpleUI.sprite = PurpleIdle;
-        }
-        else if (horizontal < 0)
-        {
-            YellowUI.sprite = YellowIdle;
-            PurpleUI.sprite = PurpleSelected;
-        }
-        else
-        {
-            YellowUI.sprite = YellowIdle;
-            PurpleUI.sprite = PurpleIdle;
-        }
     }
 
     IEnumerator startLeft()
