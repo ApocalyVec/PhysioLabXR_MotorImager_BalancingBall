@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - Canvas
   layers:
   - Default
   - TransparentFX

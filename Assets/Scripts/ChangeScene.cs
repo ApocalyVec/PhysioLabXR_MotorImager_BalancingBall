@@ -29,7 +29,7 @@ public class ChangeScene : MonoBehaviour
             }
         }
     }
-    public void goToTesting()
+    public void goToTraining()
     {
         SceneManager.LoadScene("Training", LoadSceneMode.Single);
     }

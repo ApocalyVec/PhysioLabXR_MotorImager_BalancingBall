@@ -8,12 +8,12 @@ public class GenerateCollectible : MonoBehaviour
     private int maxNum = 2;
     public int currentNum = 0;
     private GameObject playerBall;
-    private PlayerBasicMovement playerStatus;
+    private Game playerStatus;
     private Transform collectibleT;
     void Start()
     {
         playerBall = GameObject.Find("PlayerBall");
-        playerStatus = playerBall.GetComponent<PlayerBasicMovement>();
+        playerStatus = playerBall.GetComponent<Game>();
         collectibleT = CollectiblePrefab.transform;
     }
 

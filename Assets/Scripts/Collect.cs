@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Collect : MonoBehaviour
 {
-    private PlayerBasicMovement playerStatus;
+    private Game playerStatus;
     private GenerateCollectible collectibles;
 
     private void Start()
     {
-        playerStatus = GameObject.Find("PlayerBall").GetComponent<PlayerBasicMovement>();
+        playerStatus = GameObject.Find("PlayerBall").GetComponent<Game>();
         collectibles = GameObject.FindGameObjectWithTag("Ground").GetComponent<GenerateCollectible>();
     }
     void Update()
