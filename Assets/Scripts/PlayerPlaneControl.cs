@@ -29,7 +29,7 @@ public class PlayerPlaneControl : MonoBehaviour
     
     [HideInInspector]
     public float vertical = 0;
-    [HideInInspector]
+
     public float horizontal_bci = 0;
     public float horizontal_default = 0;
 
@@ -77,13 +77,13 @@ public class PlayerPlaneControl : MonoBehaviour
             //Debug.Log("prediction_sample: " + prediction_sample);
             float new_sample = prediction_sample * 2 - 1;
 
-            if (Mathf.Abs(new_sample - horizontal_bci) > 0.3){
+            if (Mathf.Abs(new_sample - horizontal_bci) > 0.1){
                 horizontal_bci = new_sample;
                 Debug.Log("horizontal_bci: " + horizontal_bci);
             }
             //horizontal_bci = prediction_sample * 2 - 1;
         } else {
-            horizontal_bci = 0;
+            //horizontal_bci = 0;
         }
         lslInlet.clearBuffer();
 

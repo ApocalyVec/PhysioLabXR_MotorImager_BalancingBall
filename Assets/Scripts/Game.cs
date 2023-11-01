@@ -26,11 +26,12 @@ public class Game : MonoBehaviour
     [SerializeField] GameObject FadeScreen;
     private CanvasGroup FinishedScreenCG;
     private TextMeshProUGUI ScoreNum;
+    public Transform spawnPoint;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        spawnPos = new Vector3(0, 3, 0);
+        spawnPos = spawnPoint.position;
 
         FinishedScreenCG = FinishedScreen.GetComponent<CanvasGroup>();
         ScoreNum = FinishedScreen.transform.GetChild(1).GetComponent<TextMeshProUGUI>();

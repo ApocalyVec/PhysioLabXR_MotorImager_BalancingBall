@@ -10,8 +10,8 @@ public static class Utils
         TrainStart = 1,
         LeftHandTrialStart = 2,
         RightHandTrialStart = 3,
-        LeftBlockStart = 7,
-        RightBlockStart = 8,
+        //LeftBlockStart = 7,
+        //RightBlockStart = 8,
         EvalStart = 6,
     }
 
@@ -28,7 +28,6 @@ public static class Utils
         LeftTrial,
         //RightFinish,
         RightTrial,
-        Break,
         End
     }
 

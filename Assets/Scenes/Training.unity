@@ -440,7 +440,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 258361798}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: -3.5, z: 0}
+  m_LocalPosition: {x: 1.5, y: -3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13685,6 +13685,7 @@ MonoBehaviour:
   LifeUI: {fileID: 0}
   FinishedScreen: {fileID: 0}
   FadeScreen: {fileID: 0}
+  spawnPoint: {fileID: 0}
 --- !u!1 &300217336
 GameObject:
   m_ObjectHideFlags: 0
@@ -26868,7 +26869,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh46072
+  m_Name: pb_Mesh48300
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -27077,7 +27078,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh43980
+  m_Name: pb_Mesh48258
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -27784,8 +27785,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 582796141}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.71, y: -4.93, z: 0.10000008}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.5, y: -5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -27881,7 +27882,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: -1, y: 5.6, z: 0}
+  m_LocalPosition: {x: -1, y: 9.45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28489,14 +28490,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.45779833, y: 0.11577812, z: -0.060270272, w: 0.87942237}
-  m_LocalPosition: {x: 0, y: 7, z: -7}
+  m_LocalRotation: {x: 0.059306376, y: 0, z: 0, w: 0.9982399}
+  m_LocalPosition: {x: 1.5, y: 6.5, z: -75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 55, y: 15, z: 0}
+  m_LocalEulerAnglesHint: {x: 6.8, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28966,7 +28967,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh46012
+  m_Name: pb_Mesh49386
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -29455,11 +29456,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2173484081036269371, guid: 6fcc7ae7e4b193b4d97df4db63a38056, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.953717
       objectReference: {fileID: 0}
     - target: {fileID: 2173484081036269371, guid: 6fcc7ae7e4b193b4d97df4db63a38056, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0.30070576
       objectReference: {fileID: 0}
     - target: {fileID: 2173484081036269371, guid: 6fcc7ae7e4b193b4d97df4db63a38056, type: 3}
       propertyPath: m_LocalRotation.y
@@ -29479,7 +29480,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2173484081036269371, guid: 6fcc7ae7e4b193b4d97df4db63a38056, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -35
       objectReference: {fileID: 0}
     - target: {fileID: 2173484081036269371, guid: 6fcc7ae7e4b193b4d97df4db63a38056, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -29578,8 +29579,8 @@ MonoBehaviour:
   isTakingBreak: 0
   sessionCountLeft: 0
   sessionCountRight: 0
-  maxSessionNum: 5
-  breakTime: 1
+  maxSessionNum: 10
+  breakTime: 2
   instructionBreak: NOW -- Please follow the instruction
   instructionLeft: Imagine pressing the LEFT side of the plane using your LEFT hand.
   instructionRight: Imagine pressing the RIGHT side of the plane using your RIGHT

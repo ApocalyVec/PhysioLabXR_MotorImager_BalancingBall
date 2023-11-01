@@ -27,7 +27,7 @@ public class Training_PlaneControl : PlayerPlaneControl
     public int sessionCountLeft = 0;
     public int sessionCountRight = 0;
 
-    [Header("Testing Parameters")]
+    [Header("Testing Parameters (Max Session Number means for each hand)")]
     public int maxSessionNum = 5;
     public float breakTime = 3f;
 
@@ -48,7 +48,7 @@ public class Training_PlaneControl : PlayerPlaneControl
     public TrialType trial = TrialType.Start;
 
     private List<TrialType> trialSequence;
-    private int currentTrialIndex = -1;
+    private int currentTrialIndex = 0;
 
 
     public override void Start()
@@ -62,18 +62,20 @@ public class Training_PlaneControl : PlayerPlaneControl
 
         // Determine the trial sequence
         trialSequence = new List<TrialType>();
-
         for (int i = 0; i < maxSessionNum; i++) {
             trialSequence.Add(TrialType.LeftTrial);
             trialSequence.Add(TrialType.RightTrial);
         }
 
         // Shuffle the trial sequence
+        int seed = 12345; 
+        UnityEngine.Random.InitState(seed);
         trialSequence = trialSequence.OrderBy(a => UnityEngine.Random.value).ToList();
+        trialSequence.Insert(0, TrialType.Start);
 
-        foreach (var trial in trialSequence) {
-            Debug.Log(trial);
-        }
+        // foreach (var trial in trialSequence) {
+        //     Debug.Log(trial);
+        // }
 
         trial = TrialType.Start;
     }
@@ -94,147 +96,148 @@ public class Training_PlaneControl : PlayerPlaneControl
     void train(){
         planeRotation();
 
-        if (currentTrialIndex == -1) {
-            trial = TrialType.Start;
-        }
-        else {
-            if (currentTrialIndex < trialSequence.Count) {
-                trial = trialSequence[currentTrialIndex];
-            } else {
-                trial = TrialType.End;
-            }
+        if (currentTrialIndex < trialSequence.Count) {
+            trial = trialSequence[currentTrialIndex];
+        } else {
+            trial = TrialType.End;
         }
 
-        switch (trial){
-            case TrialType.Start:
-                Debug.Log("sequence: " + currentTrialIndex);
-                instruction.text = "Training is starting.";
-                if (!hasSentStartMarker){
-                    hasSentStartMarker = true;
-                    outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.TrainStart });
-                    currentTrialIndex++;
-                }
-                break;
+        if (!inTesting) {
 
-            case TrialType.LeftTrial:
-                Debug.Log("sequence: " + currentTrialIndex);
-                // if (!hasSentLeftStartMarker) {
-                //     hasSentLeftStartMarker = true;
-                //     outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.LeftBlockStart });
-                // }                
-                if (!inTesting) {
+            switch (trial){
+                case TrialType.Start:
+                    Debug.Log("sequence: " + currentTrialIndex + " ("+ trial +") ");
+                    instruction.text = "Training is starting.";
+                    
+                    inTesting = true;
+                    StartCoroutine(startTraining());
+                    currentTrialIndex = 1;
+                    
+                    break;
+
+                case TrialType.LeftTrial:
+                    Debug.Log("sequence: " + currentTrialIndex + " ("+ trial +") ");
+                    // if (!hasSentLeftStartMarker) {
+                    //     hasSentLeftStartMarker = true;
+                    //     outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.LeftBlockStart });
+                    // }                
+                    
                     inTesting = true;
                     StartCoroutine(startLeft());
                     currentTrialIndex++;
-                } 
-                break;
+                    
+                    break;
 
-            case TrialType.RightTrial:
-                Debug.Log("sequence: " + currentTrialIndex);
-                // if (!hasSentRightStartMarker) {
-                //     hasSentRightStartMarker = true;
-                //     outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.RightBlockStart });
-                // }
+                case TrialType.RightTrial:
+                    Debug.Log("sequence: " + currentTrialIndex + " ("+ trial +") ");
+                    // if (!hasSentRightStartMarker) {
+                    //     hasSentRightStartMarker = true;
+                    //     outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.RightBlockStart });
+                    // }
 
-                if (!inTesting) {
+                    
                     inTesting = true;
                     StartCoroutine(startRight());
                     currentTrialIndex++;
-                }
-                break;
+                    
+                    break;
 
-            case TrialType.End:
-                isLeft = false;
-                isRight = false;
-
-                if (!hasSentEndMarker) {
-                    hasSentEndMarker = true;
-                    outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.TrainStart });
-                }
-                instruction.text = "Training is done. Please wait.";
-                break;
-            }
-
-
-        /*
-        switch (trial)
-        {
-            case TrialType.Start:
-                instruction.text = "Training is starting.";
-                if (!hasSentStartMarker){
-                    hasSentStartMarker = true;
-                    outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.TrainStart });
-                    trial = TrialType.LeftTrial;
-                }
-                break;
-            case TrialType.LeftTrial:
-                if (!hasSentLeftStartMarker) {
-                    hasSentLeftStartMarker = true;
-                    outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.LeftBlockStart });
-                }
-                if (!inTesting && sessionCountLeft < maxSessionNum){
+                case TrialType.End:
                     inTesting = true;
-                    StartCoroutine(startLeft());
-                } 
+                    isLeft = false;
+                    isRight = false;
 
-                // finish if max session number is reached
-                if (!inTesting && sessionCountLeft >= maxSessionNum) {
-
-                    trial = TrialType.LeftFinish;
-                }
-                break;
-
-
-            case TrialType.RightTrial:
-                if (!hasSentRightStartMarker) {
-                    hasSentRightStartMarker = true;
-                    outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.RightBlockStart });
-                }
-                if (!inTesting && sessionCountRight < maxSessionNum){
-                    inTesting = true;
-                    StartCoroutine(startRight());
-                }
-                
-                // finish if max session number is reached
-                if (!inTesting && sessionCountRight >= maxSessionNum) {
-                    trial = TrialType.RightFinish;
-                }
-
-                break;
-
-
-            case TrialType.LeftFinish:
-                if (!hasSendLeftEndMarker){
-                    hasSendLeftEndMarker = true;
-                    outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.LeftBlockStart });
-                }
-                finishTestingLeft = true;
-                instruction.text = instructionBreak;
-                StartCoroutine(takeBreak());
-                break;
-
-
-            case TrialType.RightFinish:
-                if (!hasSendRightEndMarker) {
-                        hasSendRightEndMarker = true;
-                        outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.RightBlockStart });
+                    if (!hasSentEndMarker) {
+                        hasSentEndMarker = true;
+                        outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.TrainStart });
                     }
-                finishTestingRight = true;
-                instruction.text = instructionBreak;
-                StartCoroutine(takeBreak());
-                break;
+                    instruction.text = "Training is done. Please wait.";
+                    inTesting = false;
 
-            case TrialType.End:
-                if (!hasSentEndMarker) {
-                    hasSentEndMarker = true;
-                    outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.TrainStart });
+                    break;
                 }
-                instruction.text = "Training is done. Please wait.";
-                break;
 
 
+            /*
+            switch (trial)
+            {
+                case TrialType.Start:
+                    instruction.text = "Training is starting.";
+                    if (!hasSentStartMarker){
+                        hasSentStartMarker = true;
+                        outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.TrainStart });
+                        trial = TrialType.LeftTrial;
+                    }
+                    break;
+                case TrialType.LeftTrial:
+                    if (!hasSentLeftStartMarker) {
+                        hasSentLeftStartMarker = true;
+                        outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.LeftBlockStart });
+                    }
+                    if (!inTesting && sessionCountLeft < maxSessionNum){
+                        inTesting = true;
+                        StartCoroutine(startLeft());
+                    } 
+
+                    // finish if max session number is reached
+                    if (!inTesting && sessionCountLeft >= maxSessionNum) {
+
+                        trial = TrialType.LeftFinish;
+                    }
+                    break;
+
+
+                case TrialType.RightTrial:
+                    if (!hasSentRightStartMarker) {
+                        hasSentRightStartMarker = true;
+                        outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.RightBlockStart });
+                    }
+                    if (!inTesting && sessionCountRight < maxSessionNum){
+                        inTesting = true;
+                        StartCoroutine(startRight());
+                    }
+                    
+                    // finish if max session number is reached
+                    if (!inTesting && sessionCountRight >= maxSessionNum) {
+                        trial = TrialType.RightFinish;
+                    }
+
+                    break;
+
+
+                case TrialType.LeftFinish:
+                    if (!hasSendLeftEndMarker){
+                        hasSendLeftEndMarker = true;
+                        outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.LeftBlockStart });
+                    }
+                    finishTestingLeft = true;
+                    instruction.text = instructionBreak;
+                    StartCoroutine(takeBreak());
+                    break;
+
+
+                case TrialType.RightFinish:
+                    if (!hasSendRightEndMarker) {
+                            hasSendRightEndMarker = true;
+                            outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.RightBlockStart });
+                        }
+                    finishTestingRight = true;
+                    instruction.text = instructionBreak;
+                    StartCoroutine(takeBreak());
+                    break;
+
+                case TrialType.End:
+                    if (!hasSentEndMarker) {
+                        hasSentEndMarker = true;
+                        outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.TrainStart });
+                    }
+                    instruction.text = "Training is done. Please wait.";
+                    break;
+
+
+            }
+            */
         }
-        */
     }
     void planeRotation(){
         
@@ -272,10 +275,20 @@ public class Training_PlaneControl : PlayerPlaneControl
             trial = TrialType.LeftTrial;
             */
     //}
+    
+    IEnumerator startTraining(){
+        if (!hasSentStartMarker){
+            hasSentStartMarker = true;
+            yield return new WaitForSecondsRealtime(breakTime);
+            outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.TrainStart });
+            inTesting = false;
+        }
+    }
+    
     IEnumerator startLeft()
     {
         instruction.text = instructionBreak;
-        yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(breakTime);
         instruction.text = instructionLeft;
         isLeft = true;
         isRight = false;
@@ -287,16 +300,12 @@ public class Training_PlaneControl : PlayerPlaneControl
         isLeft = false;
         sessionCountLeft += 1;
         inTesting = false;
-
-        // Take break
-        // isTakingBreak = true;
-        // StartCoroutine(takeBreak());
     }
 
     IEnumerator startRight()
     {
         instruction.text = instructionBreak;
-        yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(breakTime);
         instruction.text = instructionRight;
         isLeft = false;
         isRight = true;
@@ -308,10 +317,6 @@ public class Training_PlaneControl : PlayerPlaneControl
         isRight = false;
         sessionCountRight += 1;
         inTesting = false;
-
-        // Take break
-        // isTakingBreak = true;
-        // StartCoroutine(takeBreak());
     }
 
 }
