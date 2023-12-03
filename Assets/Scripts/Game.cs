@@ -56,7 +56,9 @@ public class Game : MonoBehaviour
         {
             Fader(); //hit screen effect
             transform.position = spawnPos;
-
+            // reset the momentum of the ball
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             if (lifeCount < 1)
             {
                 lifeCount = 3;
@@ -70,7 +72,6 @@ public class Game : MonoBehaviour
             else
             {
                 lifeCount--;
-                //LifeUI.GetComponentInChildren<TextMeshProUGUI>().text = lifeCount.ToString();
                 LifeUI.GetComponentInChildren<Image>().fillAmount = (float) lifeCount / lifeMax;
             }
         }
@@ -99,8 +100,7 @@ public class Game : MonoBehaviour
             isGrounded = false;
         }
     }
-
-   
+ 
     public void Fader()
     {
         FadeScreen.GetComponent<CanvasGroup>().alpha = 1;

@@ -16,10 +16,10 @@ public class Training_PlaneControl : PlayerPlaneControl
 
     [HideInInspector]
     [SerializeField] TextMeshProUGUI instruction;
-    
-    [Header("Testing Session [DEBUG]")]
-    // public bool finishTestingLeft = false;
-    // public bool finishTestingRight = false;
+    private Transform spawnPoint;
+    private Vector3 spawnPos;
+
+    [Header("[DEBUG]")]
     public bool isLeft;
     public bool isRight;
     public bool inTesting = false;
@@ -27,7 +27,7 @@ public class Training_PlaneControl : PlayerPlaneControl
     public int sessionCountLeft = 0;
     public int sessionCountRight = 0;
 
-    [Header("Testing Parameters (Max Session Number means for each hand)")]
+    [Header("Parameters (Max Session Number means for each hand)")]
     public int maxSessionNum = 5;
     public float breakTime = 3f;
 
@@ -40,9 +40,9 @@ public class Training_PlaneControl : PlayerPlaneControl
     private bool hasSentRightStartMarker = false;
     private bool hasSendRightEndMarker = false;
 
-    [SerializeField] string instructionBreak = "NOW -- Please follow the instruction";
-    [SerializeField] string instructionLeft = "Imagine pressing the LEFT side of the plane using your LEFT hand.";
-    [SerializeField] string instructionRight = "Imagine pressing the RIGHT side of the plane using your RIGHT hand.";
+    private string instructionBreak = "NOW -- Please follow the instruction";
+    private string instructionLeft = "Imagine pressing the LEFT side of the plane using your LEFT hand.";
+    private string instructionRight = "Imagine pressing the RIGHT side of the plane using your RIGHT hand.";
 
     [Tooltip("This is ahead of the current trial.")]
     public TrialType trial = TrialType.Start;
@@ -58,7 +58,8 @@ public class Training_PlaneControl : PlayerPlaneControl
         instruction = canvas.transform.Find("Instruction").GetComponent<TextMeshProUGUI>();
         networkController = GameObject.Find("NetworkController").GetComponent<LSLOutlet>();
         outlet = networkController.Outlet;
-
+        spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
+        spawnPos = spawnPoint.position;
 
         // Determine the trial sequence
         trialSequence = new List<TrialType>();
@@ -106,7 +107,6 @@ public class Training_PlaneControl : PlayerPlaneControl
 
             switch (trial){
                 case TrialType.Start:
-                    Debug.Log("sequence: " + currentTrialIndex + " ("+ trial +") ");
                     instruction.text = "Training is starting.";
                     
                     inTesting = true;
@@ -116,12 +116,6 @@ public class Training_PlaneControl : PlayerPlaneControl
                     break;
 
                 case TrialType.LeftTrial:
-                    Debug.Log("sequence: " + currentTrialIndex + " ("+ trial +") ");
-                    // if (!hasSentLeftStartMarker) {
-                    //     hasSentLeftStartMarker = true;
-                    //     outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.LeftBlockStart });
-                    // }                
-                    
                     inTesting = true;
                     StartCoroutine(startLeft());
                     currentTrialIndex++;
@@ -129,13 +123,6 @@ public class Training_PlaneControl : PlayerPlaneControl
                     break;
 
                 case TrialType.RightTrial:
-                    Debug.Log("sequence: " + currentTrialIndex + " ("+ trial +") ");
-                    // if (!hasSentRightStartMarker) {
-                    //     hasSentRightStartMarker = true;
-                    //     outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.RightBlockStart });
-                    // }
-
-                    
                     inTesting = true;
                     StartCoroutine(startRight());
                     currentTrialIndex++;
@@ -157,86 +144,6 @@ public class Training_PlaneControl : PlayerPlaneControl
                     break;
                 }
 
-
-            /*
-            switch (trial)
-            {
-                case TrialType.Start:
-                    instruction.text = "Training is starting.";
-                    if (!hasSentStartMarker){
-                        hasSentStartMarker = true;
-                        outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.TrainStart });
-                        trial = TrialType.LeftTrial;
-                    }
-                    break;
-                case TrialType.LeftTrial:
-                    if (!hasSentLeftStartMarker) {
-                        hasSentLeftStartMarker = true;
-                        outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.LeftBlockStart });
-                    }
-                    if (!inTesting && sessionCountLeft < maxSessionNum){
-                        inTesting = true;
-                        StartCoroutine(startLeft());
-                    } 
-
-                    // finish if max session number is reached
-                    if (!inTesting && sessionCountLeft >= maxSessionNum) {
-
-                        trial = TrialType.LeftFinish;
-                    }
-                    break;
-
-
-                case TrialType.RightTrial:
-                    if (!hasSentRightStartMarker) {
-                        hasSentRightStartMarker = true;
-                        outlet.push_sample(new float[] { (float)Utils.EventMarker_BallGame.RightBlockStart });
-                    }
-                    if (!inTesting && sessionCountRight < maxSessionNum){
-                        inTesting = true;
-                        StartCoroutine(startRight());
-                    }
-                    
-                    // finish if max session number is reached
-                    if (!inTesting && sessionCountRight >= maxSessionNum) {
-                        trial = TrialType.RightFinish;
-                    }
-
-                    break;
-
-
-                case TrialType.LeftFinish:
-                    if (!hasSendLeftEndMarker){
-                        hasSendLeftEndMarker = true;
-                        outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.LeftBlockStart });
-                    }
-                    finishTestingLeft = true;
-                    instruction.text = instructionBreak;
-                    StartCoroutine(takeBreak());
-                    break;
-
-
-                case TrialType.RightFinish:
-                    if (!hasSendRightEndMarker) {
-                            hasSendRightEndMarker = true;
-                            outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.RightBlockStart });
-                        }
-                    finishTestingRight = true;
-                    instruction.text = instructionBreak;
-                    StartCoroutine(takeBreak());
-                    break;
-
-                case TrialType.End:
-                    if (!hasSentEndMarker) {
-                        hasSentEndMarker = true;
-                        outlet.push_sample(new float[] { -(float)Utils.EventMarker_BallGame.TrainStart });
-                    }
-                    instruction.text = "Training is done. Please wait.";
-                    break;
-
-
-            }
-            */
         }
     }
     void planeRotation(){
@@ -249,32 +156,16 @@ public class Training_PlaneControl : PlayerPlaneControl
         {
             horizontal_default = 0;
             // re-initialize the ball position
-            playerBall.transform.position = new Vector3(2, -2f, 0);
+            playerBall.transform.position = spawnPos;
+            // reset the momentum of the ball
+            playerBall.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            playerBall.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
 
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, horizontal_default * turnAmount * -1), timeCount * turnSpeed);
 
         timeCount = timeCount + Time.deltaTime;
     }
-
-    //IEnumerator takeBreak(){
-        // transition to end state if both left and right hand training are done
-        // if (isTakingBreak) {
-        //     instruction.text = "- - -";
-        //     yield return new WaitForSecondsRealtime(breakTime);
-        //     isTakingBreak = false;
-        // }
-
-        /*
-        if (finishTestingLeft && !finishTestingRight)
-            trial = TrialType.RightTrial;
-        else if (finishTestingLeft && finishTestingRight){
-            trial = TrialType.End;
-        }
-        else
-            trial = TrialType.LeftTrial;
-            */
-    //}
     
     IEnumerator startTraining(){
         if (!hasSentStartMarker){

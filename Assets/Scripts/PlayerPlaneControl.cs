@@ -12,26 +12,26 @@ public class PlayerPlaneControl : MonoBehaviour
 /// It is also the parent of the script Training_PlaneControl.cs
 /// </summary>
 {
-    public float turnAmount = 10;
-    public float turnSpeed = 0.4f;
-    public float timeCount = 0.0f;
+    [HideInInspector]public float turnAmount = 10;
+    [HideInInspector]public float turnSpeed = 0.4f;
+    [HideInInspector]public float timeCount = 0.0f;
 
-    [HideInInspector]
-    public GameObject playerBall;
+    [HideInInspector]public GameObject playerBall;
     
     // Set the icon for the UI
     private Sprite Icon_LeftSelected;
     private Sprite Icon_RightSelected;
     private Sprite Icon_LeftIdle;
     private Sprite Icon_RightIdle;
+    private GameObject LeftHand;
+    private GameObject RightHand;
     private Image LeftUI;
     private Image RightUI;
     
-    [HideInInspector]
-    public float vertical = 0;
+    [HideInInspector]public float vertical = 0;
 
-    public float horizontal_bci = 0;
-    public float horizontal_default = 0;
+    [HideInInspector]public float horizontal_bci = 0;
+    [HideInInspector]public float horizontal_default = 0;
 
     private LSLOutlet lslOutlet;
     private LSLInletInterface lslInlet;
@@ -39,8 +39,10 @@ public class PlayerPlaneControl : MonoBehaviour
 
     public virtual void Start()
     {
-        LeftUI = GameObject.Find("LeftSide").GetComponent<Image>();
-        RightUI = GameObject.Find("RightSide").GetComponent<Image>();
+        LeftHand = GameObject.Find("WorldCanvas/LeftSide");
+        RightHand = GameObject.Find("WorldCanvas/RightSide");
+        LeftUI = LeftHand.GetComponent<Image>();
+        RightUI = RightHand.GetComponent<Image>();
         playerBall = GameObject.FindGameObjectWithTag("Player");
 
         Icon_LeftIdle = Resources.Load<Sprite>("Sprites/Left_Idle");
@@ -79,30 +81,10 @@ public class PlayerPlaneControl : MonoBehaviour
 
             if (Mathf.Abs(new_sample - horizontal_bci) > 0.1){
                 horizontal_bci = new_sample;
-                Debug.Log("horizontal_bci: " + horizontal_bci);
             }
-            //horizontal_bci = prediction_sample * 2 - 1;
-        } else {
-            //horizontal_bci = 0;
-        }
+        } 
+
         lslInlet.clearBuffer();
-
-
-        // lslInlet.pullChunk();
-        // if (lslInlet.chunkSampleNumber > 0)
-        // {
-        //     var dataBuffer = lslInlet.chunkDataBuffer;
-        //     float sample = dataBuffer[dataBuffer.GetLength(0) - 1, 0];
-        //     //float sample = lslInlet.chunkDataBuffer[-1, 0];
-        //     // change the rangle of the prediction (0, 1) to (-1, 1)
-        //     Debug.Log("sample: " + sample);
-        //     horizontal_bci = sample * 2 - 1;
-        // }
-        // else
-        // {
-        //     horizontal_bci = 0;
-        // }
-        Debug.Log("horizontal_bci: " + horizontal_bci);
 
         horizontal_default = Input.GetAxis("Horizontal");
 
